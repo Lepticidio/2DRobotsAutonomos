@@ -330,7 +330,7 @@ PrefabInstance:
     - target: {fileID: 3502522485909153250, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
@@ -404,7 +404,7 @@ PrefabInstance:
     - target: {fileID: 3502522485909153250, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 1132052822}
   - component: {fileID: 1132052824}
   - component: {fileID: 1132052825}
+  - component: {fileID: 1132052826}
   m_Layer: 8
   m_Name: Robot
   m_TagString: Untagged
@@ -680,7 +681,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1132052821}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -689,6 +690,27 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.1
+--- !u!50 &1132052826
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132052821}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &1471997057
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,7 +726,7 @@ PrefabInstance:
     - target: {fileID: 3502522485909153250, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
@@ -734,12 +756,12 @@ PrefabInstance:
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.38268343
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.92387956
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
@@ -759,7 +781,7 @@ PrefabInstance:
     - target: {fileID: 3502522485909153255, guid: 738c058a32b9f024dbf813b29a029936,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 45
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 738c058a32b9f024dbf813b29a029936, type: 3}
