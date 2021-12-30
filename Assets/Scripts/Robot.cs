@@ -133,8 +133,10 @@ public class Robot : MonoBehaviour
                 fMinAngle = fAngle;
             }
         }
+        Vector3 vGeneralDirection = oBestPoint - m_vCurrentWallPoint;
         m_vCurrentWallPoint = oBestPoint;
-        MoveToPosition(m_vCurrentWallPoint);
+        Vector3 vWallDirection = m_vCurrentWallPoint - transform.position;
+        MoveToPosition(m_vCurrentWallPoint + (transform.position + vGeneralDirection.normalized*vWallDirection.magnitude));
         if ((m_vCurrentWallPoint - m_oGoal.transform.position).sqrMagnitude < (m_vMinWallPoint - m_oGoal.transform.position).sqrMagnitude)
         {
             m_bFollowingWall = false;
