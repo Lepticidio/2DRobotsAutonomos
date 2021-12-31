@@ -13,6 +13,8 @@ public class Robot : MonoBehaviour
     bool m_bFollowingWall;
     Vector3 m_vMinWallPoint;
     Vector3 m_vCurrentWallPoint;
+    Vector3 m_vGeneralDirection;
+    Vector3 m_vPastPosition, m_vEvenPreviousPosition;
 
     private void Start()
     {
@@ -21,8 +23,6 @@ public class Robot : MonoBehaviour
 
     private void Update()
     {
-
-
         Vector3 vGoalPosition = m_oGoal.transform.position;
         RaycastHit2D oGoalHit = Physics2D.Raycast(transform.position, vGoalPosition - transform.position, m_fDetectionDistance, m_oNotTheRobot);
         if (!m_bFollowingWall)
@@ -63,15 +63,18 @@ public class Robot : MonoBehaviour
             Vector3 vRotatedVector = Quaternion.AngleAxis(i, Vector3.forward) * Vector3.up;
             RaycastHit2D oHit = Physics2D.Raycast(transform.position, vRotatedVector, m_fDetectionDistance, m_oNotTheRobot);
             m_tHits[i] = oHit;
-            Debug.DrawLine(transform.position, oHit.point, Color.red);
+            //Debug.DrawLine(transform.position, oHit.point, Color.red);
         }
 
     }
 
     void MoveToPosition(Vector3 _vPosition)
     {
+        m_vEvenPreviousPosition = m_vPastPosition;
+        m_vPastPosition = transform.position;
         Vector3 vDirection = (_vPosition - transform.position).normalized;
         transform.position += vDirection * m_fSpeed * Time.deltaTime;
+        m_vGeneralDirection = transform.position - m_vEvenPreviousPosition;
     }
 
     RaycastHit2D GetClosestHitToGoal()
@@ -99,7 +102,7 @@ public class Robot : MonoBehaviour
             }
         }
         //Debug.Log("min distance: " + fMinDistance);
-        Debug.DrawLine(transform.position, oClosestHit.point, Color.yellow);
+        //Debug.DrawLine(transform.position, oClosestHit.point, Color.yellow);
         return oClosestHit;
     }
 
@@ -110,7 +113,7 @@ public class Robot : MonoBehaviour
         {
             if (CheckPointIsBorder(i))
             {
-                tBordersList.Add(m_tHits[ReturnEmptyBorderNextToIndex(i)].point);
+                tBordersList.Add(m_tHits[i].point);
             }
         }
         return tBordersList;
@@ -120,9 +123,9 @@ public class Robot : MonoBehaviour
     {
         Debug.Log("Following wall");
         Vector2 vInitialDirection = m_vCurrentWallPoint - transform.position;
+        Vector3 oBestPoint = new Vector3();
         List<Vector3> tBordersList = GetBorders();
         float fMinAngle = 360;
-        Vector3 oBestPoint = new Vector3();
         for (int i = 0; i < tBordersList.Count; i++)
         {
             Vector3 vNewDirection = tBordersList[i] - transform.position;
@@ -133,10 +136,15 @@ public class Robot : MonoBehaviour
                 fMinAngle = fAngle;
             }
         }
-        Vector3 vGeneralDirection = oBestPoint - m_vCurrentWallPoint;
+        Debug.DrawLine(transform.position, oBestPoint, Color.red);
+
         m_vCurrentWallPoint = oBestPoint;
         Vector3 vWallDirection = m_vCurrentWallPoint - transform.position;
-        MoveToPosition(m_vCurrentWallPoint + (transform.position + vGeneralDirection.normalized*vWallDirection.magnitude));
+        Debug.DrawLine(transform.position, m_vCurrentWallPoint, Color.magenta);
+        Debug.DrawLine(transform.position, transform.position + m_vGeneralDirection.normalized * vWallDirection.magnitude, Color.yellow);
+        Vector3 vTarget = (m_vCurrentWallPoint + (transform.position + m_vGeneralDirection.normalized * vWallDirection.magnitude))/2;
+        Debug.DrawLine(transform.position, vTarget, Color.white);
+        MoveToPosition(vTarget);
         if ((m_vCurrentWallPoint - m_oGoal.transform.position).sqrMagnitude < (m_vMinWallPoint - m_oGoal.transform.position).sqrMagnitude)
         {
             m_bFollowingWall = false;
