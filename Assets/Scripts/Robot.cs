@@ -6,6 +6,7 @@ public class Robot : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    public bool m_bPaused = true;
     RaycastHit2D[] m_tHits = new RaycastHit2D[360];
     public float m_fDetectionDistance, m_fSpeed;
     public Goal m_oGoal;
@@ -23,36 +24,39 @@ public class Robot : MonoBehaviour
 
     private void Update()
     {
-        Vector3 vGoalPosition = m_oGoal.transform.position;
-        RaycastHit2D oGoalHit = Physics2D.Raycast(transform.position, vGoalPosition - transform.position, m_fDetectionDistance, m_oNotTheRobot);
-        if (!m_bFollowingWall)
+        if(!m_bPaused)
         {
-
-            //No obstacles
-            if (oGoalHit.collider == null || oGoalHit.collider == m_oGoal.m_oCollider)
+            Vector3 vGoalPosition = m_oGoal.transform.position;
+            RaycastHit2D oGoalHit = Physics2D.Raycast(transform.position, vGoalPosition - transform.position, m_fDetectionDistance, m_oNotTheRobot);
+            if (!m_bFollowingWall)
             {
-                MoveToPosition(m_oGoal.transform.position);
-                Debug.DrawLine(transform.position, m_oGoal.transform.position, Color.green);
-                Debug.Log("Moving to goal");
+
+                //No obstacles
+                if (oGoalHit.collider == null || oGoalHit.collider == m_oGoal.m_oCollider)
+                {
+                    MoveToPosition(m_oGoal.transform.position);
+                    Debug.DrawLine(transform.position, m_oGoal.transform.position, Color.green);
+                    Debug.Log("Moving to goal");
+                }
+                else
+                {
+                    ScanSorroundings();
+                    RaycastHit2D oClosestHit = GetClosestHitToGoal();
+                    m_vMinWallPoint = oClosestHit.point;
+                    m_vCurrentWallPoint = m_vMinWallPoint;
+                    MoveToPosition(m_vMinWallPoint);
+                    if (oClosestHit.transform != null)
+                    {
+                        Debug.Log("Encountered Obstacle " + oClosestHit.transform.gameObject.name);
+                    }
+                    m_bFollowingWall = true;
+                }
             }
             else
             {
                 ScanSorroundings();
-                RaycastHit2D oClosestHit = GetClosestHitToGoal();
-                m_vMinWallPoint = oClosestHit.point;
-                m_vCurrentWallPoint = m_vMinWallPoint;
-                MoveToPosition(m_vMinWallPoint);
-                if (oClosestHit.transform != null)
-                {
-                    Debug.Log("Encountered Obstacle " + oClosestHit.transform.gameObject.name);
-                }
-                m_bFollowingWall = true;
+                FollowWall();
             }
-        }
-        else
-        {
-            ScanSorroundings();
-            FollowWall();
         }
     }
 
