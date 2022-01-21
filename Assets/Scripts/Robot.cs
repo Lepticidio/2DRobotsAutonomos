@@ -6,7 +6,7 @@ public class Robot : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public bool m_bPaused = true;
+    public bool m_bPaused = true, m_bFinished = false;
     RaycastHit2D[] m_tHits = new RaycastHit2D[360];
     public float m_fDetectionDistance, m_fSpeed;
     public Goal m_oGoal;
@@ -22,9 +22,14 @@ public class Robot : MonoBehaviour
         m_oNotTheRobot = ~LayerMask.GetMask("Robot");
     }
 
+    void OnTriggerEnter2D()
+    {
+        m_bFinished = true;
+    }
+
     private void Update()
     {
-        if(!m_bPaused)
+        if(!m_bPaused && !m_bFinished)
         {
             Vector3 vGoalPosition = m_oGoal.transform.position;
             RaycastHit2D oGoalHit = Physics2D.Raycast(transform.position, vGoalPosition - transform.position, m_fDetectionDistance, m_oNotTheRobot);
@@ -36,7 +41,6 @@ public class Robot : MonoBehaviour
                 {
                     MoveToPosition(m_oGoal.transform.position);
                     Debug.DrawLine(transform.position, m_oGoal.transform.position, Color.green);
-                    Debug.Log("Moving to goal");
                 }
                 else
                 {
@@ -45,10 +49,6 @@ public class Robot : MonoBehaviour
                     m_vMinWallPoint = oClosestHit.point;
                     m_vCurrentWallPoint = m_vMinWallPoint;
                     MoveToPosition(m_vMinWallPoint);
-                    if (oClosestHit.transform != null)
-                    {
-                        Debug.Log("Encountered Obstacle " + oClosestHit.transform.gameObject.name);
-                    }
                     m_bFollowingWall = true;
                 }
             }
@@ -96,7 +96,6 @@ public class Robot : MonoBehaviour
                     {
                         fMinDistance = fCurrentDistance;
                         oClosestHit = m_tHits[i];
-                        //Debug.Log("Closest hit is from " + oClosestHit.collider.gameObject);
                     }
                 }
                 else
@@ -105,7 +104,6 @@ public class Robot : MonoBehaviour
                 }
             }
         }
-        //Debug.Log("min distance: " + fMinDistance);
         //Debug.DrawLine(transform.position, oClosestHit.point, Color.yellow);
         return oClosestHit;
     }
@@ -125,7 +123,6 @@ public class Robot : MonoBehaviour
 
     void FollowWall()
     {
-        Debug.Log("Following wall");
         Vector2 vInitialDirection = m_vCurrentWallPoint - transform.position;
         Vector3 oBestPoint = new Vector3();
         List<Vector3> tBordersList = GetBorders();
@@ -154,32 +151,6 @@ public class Robot : MonoBehaviour
             m_bFollowingWall = false;
         }
     }
-
-    int ReturnEmptyBorderNextToIndex(int _iHitIndex)
-    {
-
-        int iSuperior = _iHitIndex + 1;
-        int iInferior = _iHitIndex - 1;
-        if (iSuperior >= m_tHits.Length)
-        {
-            iSuperior = 0;
-        }
-        if (iInferior < 0)
-        {
-            iInferior = m_tHits.Length - 1;
-        }
-        Debug.Log("index: " + _iHitIndex + " superior: " + iSuperior + " inferior: " + iInferior);
-        if (m_tHits[iSuperior].collider == null)
-        {
-            return iSuperior;
-        }
-        else
-        {
-            return iInferior;
-        }
-
-    }
-
     bool CheckPointIsBorder(int _iHitIndex)
     {
         if (m_tHits[_iHitIndex].collider != null)

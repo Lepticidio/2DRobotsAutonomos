@@ -8,6 +8,7 @@ public class Obstacle : MonoBehaviour
 {
     public Collider2D m_oCollider;
     public TMP_Dropdown m_oDropdown;
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && m_oDropdown.value == 1)

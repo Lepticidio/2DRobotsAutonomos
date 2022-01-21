@@ -21,7 +21,7 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && m_oRobot.m_bPaused)
         {
             if((Input.mousePosition.x/ Screen.width> 0.275f  || Input.mousePosition.y/Screen.height < 0.65f) && Input.mousePosition.y / Screen.height < 0.9f)
             {
@@ -39,7 +39,6 @@ public class UIController : MonoBehaviour
                 {
                     m_oGoal.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0, 0, 10);
                 }
-
             }
         }
     }
