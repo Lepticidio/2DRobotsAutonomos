@@ -17,6 +17,8 @@ public class Robot : MonoBehaviour
     Vector3 m_vGeneralDirection;
     Vector3 m_vPastPosition, m_vEvenPreviousPosition;
 
+    public LineRenderer m_oLineRenderer1, m_oLineRenderer2, m_oLineRenderer3;
+
     private void Start()
     {
         m_oNotTheRobot = ~LayerMask.GetMask("Robot");
@@ -29,7 +31,10 @@ public class Robot : MonoBehaviour
 
     private void Update()
     {
-        if(!m_bPaused && !m_bFinished)
+        m_oLineRenderer1.enabled = false;
+        m_oLineRenderer2.enabled = false;
+        m_oLineRenderer3.enabled = false;
+        if (!m_bPaused && !m_bFinished)
         {
             Vector3 vGoalPosition = m_oGoal.transform.position;
             RaycastHit2D oGoalHit = Physics2D.Raycast(transform.position, vGoalPosition - transform.position, m_fDetectionDistance, m_oNotTheRobot);
@@ -39,6 +44,7 @@ public class Robot : MonoBehaviour
                 //No obstacles
                 if (oGoalHit.collider == null || oGoalHit.collider == m_oGoal.m_oCollider)
                 {
+                    DrawLine(m_oLineRenderer1, transform.position, m_oGoal.transform.position, Color.green);
                     MoveToPosition(m_oGoal.transform.position);
                     Debug.DrawLine(transform.position, m_oGoal.transform.position, Color.green);
                 }
@@ -48,6 +54,8 @@ public class Robot : MonoBehaviour
                     RaycastHit2D oClosestHit = GetClosestHitToGoal();
                     m_vMinWallPoint = oClosestHit.point;
                     m_vCurrentWallPoint = m_vMinWallPoint;
+                    DrawLine(m_oLineRenderer1, transform.position, m_vMinWallPoint, new Color(1, 0, 0, 0.5f));
+                    DrawLine(m_oLineRenderer2, m_vMinWallPoint, m_oGoal.transform.position, new Color(1, 0.5f, 0, 0.25f));
                     MoveToPosition(m_vMinWallPoint);
                     m_bFollowingWall = true;
                 }
@@ -141,10 +149,10 @@ public class Robot : MonoBehaviour
 
         m_vCurrentWallPoint = oBestPoint;
         Vector3 vWallDirection = m_vCurrentWallPoint - transform.position;
-        Debug.DrawLine(transform.position, m_vCurrentWallPoint, Color.magenta);
-        Debug.DrawLine(transform.position, transform.position + m_vGeneralDirection.normalized * vWallDirection.magnitude, Color.yellow);
         Vector3 vTarget = (m_vCurrentWallPoint + (transform.position + m_vGeneralDirection.normalized * vWallDirection.magnitude))/2;
-        Debug.DrawLine(transform.position, vTarget, Color.white);
+        DrawLine(m_oLineRenderer1, transform.position, m_vMinWallPoint, new Color(1,0,0, 0.5f));
+        DrawLine(m_oLineRenderer3, transform.position, vTarget, new Color(1, 1f, 0, 0.5f));
+        DrawLine(m_oLineRenderer2, m_vMinWallPoint, m_oGoal.transform.position, new Color(1, 0.5f, 0, 0.25f));
         MoveToPosition(vTarget);
         if ((m_vCurrentWallPoint - m_oGoal.transform.position).sqrMagnitude < (m_vMinWallPoint - m_oGoal.transform.position).sqrMagnitude)
         {
@@ -171,5 +179,14 @@ public class Robot : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public void DrawLine(LineRenderer _oRenderer, Vector3 _vOrigin, Vector3 _vEnd, Color _oColor)
+    {
+        _oRenderer.enabled = true;
+        Vector3[] tPositions = new Vector3[] { _vOrigin, _vEnd };
+        _oRenderer.startColor = _oColor;
+        _oRenderer.endColor = _oColor;
+        _oRenderer.SetPositions(tPositions);
     }
 }
